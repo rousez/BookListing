@@ -5,60 +5,29 @@ package com.zrouse.booklisting;
  */
 
 public class Book {
-    /** Magnitude of the earthquake */
-    private double mMagnitude;
 
-    /** Location of the earthquake */
-    private String mLocation;
+    private String[] mAuthors;
+    private String mTitle;
 
-    /** Time of the earthquake */
-    private long mTimeInMilliseconds;
-
-    /** Website URL of the earthquake */
-    private String mUrl;
-
-    /**
-     * Constructs a new {@link Earthquake} object.
-     *
-     * @param magnitude is the magnitude (size) of the earthquake
-     * @param location is the location where the earthquake happened
-     * @param timeInMilliseconds is the time in milliseconds (from the Epoch) when the
-     *                           earthquake happened
-     * @param url is the website URL to find more details about the earthquake
-     */
-    public Book(double magnitude, String location, long timeInMilliseconds, String url) {
-        mMagnitude = magnitude;
-        mLocation = location;
-        mTimeInMilliseconds = timeInMilliseconds;
-        mUrl = url;
+    public Book(String[] authors, String title) {
+        mAuthors = authors;
+        mTitle = title;
     }
 
-    /**
-     * Returns the magnitude of the earthquake.
-     */
-    public double getMagnitude() {
-        return mMagnitude;
+    public String[] getAuthor() {
+        return mAuthors;
     }
 
-    /**
-     * Returns the location of the earthquake.
-     */
-    public String getLocation() {
-        return mLocation;
+    public String getTitle() {
+        return mTitle;
     }
 
-    /**
-     * Returns the time of the earthquake.
-     */
-    public long getTimeInMilliseconds() {
-        return mTimeInMilliseconds;
+    public void setAuthors(String[] authors) {
+         this.mAuthors = authors;
     }
 
-    /**
-     * Returns the website URL to find more information about the earthquake.
-     */
-    public String getUrl() {
-        return mUrl;
+    public void setTitle(String title) {
+        this.mTitle = title;
     }
 
 }
