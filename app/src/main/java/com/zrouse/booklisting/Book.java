@@ -1,9 +1,5 @@
 package com.zrouse.booklisting;
 
-/**
- * Created by zrouse on 3/21/2017.
- */
-
 public class Book {
 
     private String[] mAuthors;

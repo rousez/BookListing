@@ -1,11 +1,7 @@
 package com.zrouse.booklisting;
 
-/**
- * Created by zrouse on 3/21/2017.
- */
 import android.content.Context;
-import android.graphics.drawable.GradientDrawable;
-import android.support.v4.content.ContextCompat;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,22 +9,19 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
+
 import java.util.List;
 
 public class BookAdapter extends ArrayAdapter<Book> {
 
-    public BookAdapter(Context context, List<Book> books) {
+
+
+    public BookAdapter(Context context, ArrayList<Book> books) {
         super(context, 0, books);
     }
-
-    /**
-     * Returns a list item view that displays information about the earthquake at the given position
-     * in the list of earthquakes.
-     */
+    @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Check if there is an existing list item view (called convertView) that we can reuse,

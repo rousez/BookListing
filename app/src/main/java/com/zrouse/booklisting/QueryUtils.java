@@ -1,9 +1,5 @@
 package com.zrouse.booklisting;
 
-/**
- * Created by zrouse on 3/21/2017.
- */
-
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -167,6 +163,7 @@ public final class QueryUtils {
 
                 for (int j = 0; j< authors.length(); j++) {
                     authorsArray[j] = authors.getString(j);
+                    Log.d(LOG_TAG, authorsArray[j]);
                 }
 
                 String title = volumes.getString("title");
