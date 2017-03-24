@@ -22,7 +22,7 @@ public class BookActivity extends AppCompatActivity {
 
     /** URL for earthquake data from the USGS dataset */
     private static final String GOOGLE_BOOK_REQUEST_URL =
-            "https://www.googleapis.com/books/v1/volumes?maxResults=40&q=";
+            "https://www.googleapis.com/books/v1/volumes?maxResults=20&q=";
 
     private BookAdapter mAdapter;
     private EditText mEditText;
@@ -57,30 +57,29 @@ public class BookActivity extends AppCompatActivity {
                 queryBooks = mEditText.getText().toString().replaceAll(" ", "+");
                 Log.i(LOG_TAG, "The search query from the user is: " + queryBooks);
 
-                if (queryBooks != null && !queryBooks.equals("")) {
-                    String searchQuery = GOOGLE_BOOK_REQUEST_URL + queryBooks;
-                    Log.i(LOG_TAG, "URL_QUERY IS: " + searchQuery);
-                    // Get a reference to the ConnectivityManager to check state of network connectivity
-                    ConnectivityManager connMgr = (ConnectivityManager)
-                            getSystemService(Context.CONNECTIVITY_SERVICE);
+                ConnectivityManager connMgr = (ConnectivityManager)
+                        getSystemService(Context.CONNECTIVITY_SERVICE);
 
-                    // Get details on the currently active default data network
-                    NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-                    // If there is a network connection, fetch data
-                    if (networkInfo != null && networkInfo.isConnected()) {
+                // Get details on the currently active default data network
+                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+                // If there is a network connection, fetch data
+                if (networkInfo != null && networkInfo.isConnected()) {
+
+                    if (queryBooks != null && !queryBooks.equals("")) {
+                        String searchQuery = GOOGLE_BOOK_REQUEST_URL + queryBooks;
+                        Log.i(LOG_TAG, "URL_QUERY IS: " + searchQuery);
 
                         BookAsyncTask bookQueryAsyncTask = new BookAsyncTask();
                         bookQueryAsyncTask.execute(searchQuery);
 
                     } else {
-                        // Update empty state with no connection error message
-                        mEmptyStateTextView.setText(R.string.no_internet_connection);
+                        mAdapter.clear();
+                        Log.i(LOG_TAG, "Search Query is empty and there are no books to display");
+                        mEmptyStateTextView.setText(R.string.no_books);
                     }
-
                 } else {
-                    mAdapter.clear();
-                    Log.i(LOG_TAG, "Search Query is empty and there are no books to display");
-                    mEmptyStateTextView.setText(R.string.no_books);
+                    // Update empty state with no connection error message
+                    mEmptyStateTextView.setText(R.string.no_internet_connection);
                 }
             }
         });

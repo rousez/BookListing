@@ -35,7 +35,6 @@ public class BookAdapter extends ArrayAdapter<Book> {
 
         TextView authorsView = (TextView) listItemView.findViewById(R.id.authors);
         authorsView.setText(Arrays.toString(currentBook.getAuthor()).replaceAll("\\[|\\]|null", ""));
-
         // Return the list item view that is now showing the appropriate data
         return listItemView;
     }
