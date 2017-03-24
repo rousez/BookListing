@@ -4,10 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context="com.zrouse.booklisting.BookActivity"
-    android:focusable="true"
+    android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
     android:orientation="horizontal"
-    android:weightSum="4">
+    android:weightSum="4"
+    android:id="@+id/mainLayout">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -24,20 +25,23 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textColor="@android:color/white"
             android:text="@string/search"/>
     </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginTop="50dp">
 
         <ListView
             android:id="@+id/listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@null"
-            android:dividerHeight="0dp"
+            android:divider="?dividerHorizontal"
+            android:dividerHeight="1dp"
+            android:layout_alignParentBottom="true"
             tools:layout="@layout/book_listing"/>
 
         <TextView

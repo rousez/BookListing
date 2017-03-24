@@ -13,7 +13,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,28 +38,24 @@ public class BookActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book);
 
-        // Find a reference to the {@link ListView} in the layout
         bookListView = (ListView) findViewById(R.id.listview);
         mEditText = (EditText) findViewById(R.id.search_text);
         mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
         bookListView.setEmptyView(mEmptyStateTextView);
 
-        // Create a new adapter that takes an empty list of earthquakes as input
         mAdapter = new BookAdapter(this, new ArrayList<Book>());
-        // Set the adapter on the {@link ListView}
-        // so the list can be populated in the user interface
         bookListView.setAdapter(mAdapter);
 
         mSearchButton = (Button) findViewById(R.id.search_button);
-        // Set an item click listener on the ListView, which sends an intent to a web browser
-        // to open a website with more information about the selected earthquake.
+
         mSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mEditText.clearFocus();
+                findViewById(R.id.mainLayout).requestFocus();
 
                 queryBooks = mEditText.getText().toString().replaceAll(" ", "+");
-                Log.i(LOG_TAG, "is this happening: " + queryBooks);
+                Log.i(LOG_TAG, "The search query from the user is: " + queryBooks);
 
                 if (queryBooks != null && !queryBooks.equals("")) {
                     String searchQuery = GOOGLE_BOOK_REQUEST_URL + queryBooks;
@@ -71,27 +66,24 @@ public class BookActivity extends AppCompatActivity {
 
                     // Get details on the currently active default data network
                     NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
                     // If there is a network connection, fetch data
                     if (networkInfo != null && networkInfo.isConnected()) {
 
                         BookAsyncTask bookQueryAsyncTask = new BookAsyncTask();
-
                         bookQueryAsyncTask.execute(searchQuery);
 
                     } else {
-
                         // Update empty state with no connection error message
                         mEmptyStateTextView.setText(R.string.no_internet_connection);
                     }
 
                 } else {
+                    mAdapter.clear();
+                    Log.i(LOG_TAG, "Search Query is empty and there are no books to display");
                     mEmptyStateTextView.setText(R.string.no_books);
                 }
-
             }
         });
-
     }
 
     private class BookAsyncTask extends AsyncTask<String, Void, List<Book>> {
@@ -113,10 +105,10 @@ public class BookActivity extends AppCompatActivity {
 
                 mAdapter.addAll(result);
 
+            } else {
+                mAdapter.clear();
+                mEmptyStateTextView.setText(R.string.no_books);
             }
-
         }
-
     }
-
 }

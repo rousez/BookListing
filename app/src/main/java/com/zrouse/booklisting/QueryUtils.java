@@ -31,13 +31,9 @@ public final class QueryUtils {
     QueryUtils() {
     }
 
-    /**
-     * Query the USGS dataset and return a list of {@link Book} objects.
-     */
     public static List<Book> fetchBookData(String requestUrl) {
         // Create URL object
         URL url = createUrl(requestUrl);
-
         // Perform HTTP request to the URL and receive a JSON response back
         String jsonResponse = null;
         try {
@@ -45,17 +41,11 @@ public final class QueryUtils {
         } catch (IOException e) {
             Log.e(LOG_TAG, "Problem making the HTTP request.", e);
         }
-
-        // Extract relevant fields from the JSON response and create a list of {@link Earthquake}s
         List<Book> books = extractFeatureFromJson(jsonResponse);
 
-        // Return the list of {@link Earthquake}s
         return books;
     }
 
-    /**
-     * Returns new URL object from the given string URL.
-     */
     private static URL createUrl(String stringUrl) {
         URL url = null;
         try {
@@ -66,9 +56,6 @@ public final class QueryUtils {
         return url;
     }
 
-    /**
-     * Make an HTTP request to the given URL and return a String as the response.
-     */
     private static String makeHttpRequest(URL url) throws IOException {
         String jsonResponse = "";
 
@@ -110,10 +97,6 @@ public final class QueryUtils {
         return jsonResponse;
     }
 
-    /**
-     * Convert the {@link InputStream} into a String which contains the
-     * whole JSON response from the server.
-     */
     private static String readFromStream(InputStream inputStream) throws IOException {
         StringBuilder output = new StringBuilder();
         if (inputStream != null) {
@@ -127,57 +110,60 @@ public final class QueryUtils {
         }
         return output.toString();
     }
-    /**
-     * Return a list of {@link Book} objects that has been built up from
-     * parsing the given JSON response.
-     */
+
     private static List<Book> extractFeatureFromJson(String bookJSON) {
         // If the JSON string is empty or null, then return early.
         if (TextUtils.isEmpty(bookJSON)) {
             return null;
         }
-
-        // Create an empty ArrayList that we can start adding earthquakes to
+        // Create an empty ArrayList that we can start adding books to
         List<Book> books = new ArrayList<>();
 
         try {
-
             // Create a JSONObject from the JSON response string
             JSONObject baseJsonResponse = new JSONObject(bookJSON);
+            if (baseJsonResponse.has("items")) {
+                //JSON Array where the data of books we want is stored
+                JSONArray bookArray = baseJsonResponse.getJSONArray("items");
 
-            // Extract the JSONArray associated with the key called "features",
-            // which represents a list of features (or earthquakes).
-            JSONArray bookArray = baseJsonResponse.getJSONArray("items");
+                // For each book in the bookArray, create a {@link Book} object
+                for (int i = 0; i < bookArray.length(); i++) {
 
-            // For each earthquake in the earthquakeArray, create an {@link Earthquake} object
-            for (int i = 0; i < bookArray.length(); i++) {
+                    JSONObject currentBook = bookArray.getJSONObject(i);
+                    JSONObject volumes = currentBook.getJSONObject("volumeInfo");
+                    // Ensure that each volume has a title and author
+                    if (volumes.has("title") && volumes.has("authors")) {
 
-                // Get a single earthquake at position i within the list of earthquakes
-                JSONObject currentBook = bookArray.getJSONObject(i);
+                        JSONArray authors = volumes.getJSONArray("authors");
 
-                JSONObject volumes = currentBook.getJSONObject("volumeInfo");
+                        Log.i(LOG_TAG, "Length of Authors JSON Array is: " + authors.length());
+                        String[] authorsArray = new String[authors.length()];
 
-                String[] authorsArray = new String[]{};
+                        for (int j = 0; j < authors.length(); j++) {
+                            authorsArray[j] = authors.getString(j);
+                            Log.d(LOG_TAG, "Author(s) for book is: " + authorsArray[j]);
+                        }
 
-                JSONArray authors = volumes.getJSONArray("authors");
+                        String title = volumes.getString("title");
+                        Book book = new Book(authorsArray, title);
+                        books.add(book);
+                        // Some volumes only have a title
+                    } else if (volumes.has("title")) {
 
-                for (int j = 0; j< authors.length(); j++) {
-                    authorsArray[j] = authors.getString(j);
-                    Log.d(LOG_TAG, authorsArray[j]);
+                        String title = volumes.getString("title");
+                        String[] authorsArray = null;
+                        Book book = new Book(authorsArray, title);
+                        books.add(book);
+
+                    } else {
+                        Log.e(LOG_TAG, "One of the books results does not have a Title and Authors");
+                    }
                 }
-
-                String title = volumes.getString("title");
-
-                Book book = new Book(authorsArray, title);
-
-                // Add the new {@link Book} to the list of books.
-                books.add(book);
+            } else {
+                Log.e(LOG_TAG, "No book results could be found from the user's search query");
             }
 
         } catch (JSONException e) {
-            // If an error is thrown when executing any of the above statements in the "try" block,
-            // catch the exception here, so the app doesn't crash. Print a log message
-            // with the message from the exception.
             Log.e("QueryUtils", "Problem parsing the Google Book JSON results", e);
         }
 
